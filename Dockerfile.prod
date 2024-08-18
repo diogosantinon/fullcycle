@@ -1,0 +1,18 @@
+FROM golang:1.21-alpine as builder
+
+WORKDIR /app
+
+# Copiar código para o contêiner
+COPY . .
+
+# Compilar o binario estatico
+RUN CGO_ENABLED=0 GOOS=linux go build -a -o app .
+
+# Criacao da imagem final com scratch
+FROM scratch
+
+# Copie o binario
+COPY --from=builder /app/app /app
+
+# Comando 
+ENTRYPOINT ["/app"]
